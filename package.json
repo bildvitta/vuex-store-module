@@ -1,14 +1,10 @@
 {
   "name": "vuex-store-module",
   "version": "0.0.1",
-  "description": "An generic Vuex store module for keep it simple. Use your time for what you really needs.",
+  "description": "A generic Vuex store module for keep it simple. Use your time for what you really needs.",
   "keywords": [
     "vue",
-    "vuex",
-    "store",
-    "vuex store",
-    "generic",
-    "generic store"
+    "vuex"
   ],
   "main": "dist/vuexStoreModule.js",
   "scripts": {
