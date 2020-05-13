@@ -1,0 +1,34 @@
+{
+  "name": "vuex-store-module",
+  "version": "0.0.1",
+  "description": "An generic Vuex store module for keep it simple. Use your time for what you really needs.",
+  "keywords": [
+    "vue",
+    "vuex",
+    "store",
+    "vuex store",
+    "generic",
+    "generic store"
+  ],
+  "main": "dist/vuexStoreModule.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build src/vuexStoreModule.js -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bildvitta/vuex-store-module.git"
+  },
+  "author": "Bild & Vitta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bildvitta/vuex-store-module/issues"
+  },
+  "homepage": "https://github.com/bildvitta/vuex-store-module#readme",
+  "dependencies": {
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
