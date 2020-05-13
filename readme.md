@@ -1,4 +1,5 @@
 # vuex-store-module
+
 `VuexStoreModule` is a generic Vuex store module for keep it simple. Use your time for what you really needs.
 
 ## Getting Started
@@ -6,7 +7,7 @@
 ### Installation
 
 ```
-npm i store-module-test
+npm i vuex-store-module
 ```
 
 ### Usage
