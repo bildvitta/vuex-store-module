@@ -1,4 +1,662 @@
-parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcelRequire,u="function"==typeof require&&require;function f(t,n){if(!r[t]){if(!e[t]){var i="function"==typeof parcelRequire&&parcelRequire;if(!n&&i)return i(t,!0);if(o)return o(t,!0);if(u&&"string"==typeof t)return u(t);var c=new Error("Cannot find module '"+t+"'");throw c.code="MODULE_NOT_FOUND",c}p.resolve=function(r){return e[t][1][r]||r},p.cache={};var l=r[t]=new f.Module(t);e[t][0].call(l.exports,p,l,l.exports,this)}return r[t].exports;function p(e){return f(p.resolve(e))}}f.isParcelRequire=!0,f.Module=function(e){this.id=e,this.bundle=f,this.exports={}},f.modules=e,f.cache=r,f.parent=o,f.register=function(r,t){e[r]=[function(e,r){r.exports=t},{}]};for(var c=0;c<t.length;c++)try{f(t[c])}catch(e){i||(i=e)}if(t.length){var l=f(t[t.length-1]);"object"==typeof exports&&"undefined"!=typeof module?module.exports=l:"function"==typeof define&&define.amd?define(function(){return l}):n&&(this[n]=l)}if(parcelRequire=f,i)throw i;return f}({"l6fb":[function(require,module,exports) {
-"use strict";function t(t,r){var e=Object.keys(t);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(t);r&&(n=n.filter(function(r){return Object.getOwnPropertyDescriptor(t,r).enumerable})),e.push.apply(e,n)}return e}function r(r){for(var n=1;n<arguments.length;n++){var i=null!=arguments[n]?arguments[n]:{};n%2?t(Object(i),!0).forEach(function(t){e(r,t,i[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(r,Object.getOwnPropertyDescriptors(i)):t(Object(i)).forEach(function(t){Object.defineProperty(r,t,Object.getOwnPropertyDescriptor(i,t))})}return r}function e(t,r,e){return r in t?Object.defineProperty(t,r,{value:e,enumerable:!0,configurable:!0,writable:!0}):t[r]=e,t}function n(t){return s(t)||o(t)||c(t)||i()}function i(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function c(t,r){if(t){if("string"==typeof t)return a(t,r);var e=Object.prototype.toString.call(t).slice(8,-1);return"Object"===e&&t.constructor&&(e=t.constructor.name),"Map"===e||"Set"===e?Array.from(t):"Arguments"===e||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(e)?a(t,r):void 0}}function o(t){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(t))return Array.from(t)}function s(t){if(Array.isArray(t))return a(t)}function a(t,r){(null==r||r>t.length)&&(r=t.length);for(var e=0,n=new Array(r);e<r;e++)n[e]=t[e];return n}function u(t,r){if(!(t instanceof r))throw new TypeError("Cannot call a class as a function")}function l(t,r){for(var e=0;e<r.length;e++){var n=r[e];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function f(t,r,e){return r&&l(t.prototype,r),e&&l(t,e),t}Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;var h=function(){function t(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};if(u(this,t),!r.apiService)throw new Error("Please provide an API service.");this.api=r.apiService}return f(t,[{key:"createStoreModule",value:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if(!t)throw new Error("Resource name must be specified.");function i(t){if("function"==typeof e[t]){for(var r=arguments.length,n=new Array(r>1?r-1:0),i=1;i<r;i++)n[i-1]=arguments[i];e[t](n)}}var c=e.idAttribute||"id",o=e.perPage||12,s=e.methods||["CREATE","DESTROY","FETCH_FILTERS","FETCH_FORM","FETCH_LIST","FETCH_SINGLE","REPLACE","UPDATE"],a=s.includes("CREATE"),u=s.includes("DESTROY"),l=s.includes("FETCH_FILTERS"),f=s.includes("FETCH_FORM"),h=s.includes("FETCH_LIST"),p=s.includes("FETCH_SINGLE"),g=s.includes("REPLACE"),d=s.includes("UPDATE"),S={filters:{},list:[],totalPages:0};a&&(S.isFetchingSingle=!1,S.fetchSingleError=null),u&&(S.isDestroying=!1,S.destroyError=null),l&&(S.isFetchingFilters=!1,S.fetchFiltersError=null),f&&(S.isFetchingForm=!1,S.fetchFormError=null),h&&(S.isFetchingList=!1,S.fetchListError=null),p&&(S.isFetchingSingle=!1,S.fetchSingleError=null),g&&(S.isReplacing=!1,S.replaceError=null),d&&(S.isUpdating=!1,S.updateError=null),Object.assign(S,e.state||{});var E={list:function(t){return t.list},filters:function(t){return t.filters},totalPages:function(t){return t.totalPages},byId:function(t){return function(r){return t.list.find(function(t){return t[c]===r})}},isLoading:function(t){return t.isCreating||t.isDestroying||t.isFetchingFilters||t.isFetchingList||t.isFetchingSingle||t.isReplacing||t.isUpdating},hasErrors:function(t){return null!==t.createError||null!==t.destroyError||null!==t.fetchFormError||null!==t.fetchFiltersError||null!==t.fetchListError||null!==t.fetchSingleError||null!==t.replaceError||null!==t.updateError}};Object.assign(E,e.getters||{});var m={};a&&(m.createStart=function(t){t.isCreating=!0,i("onCreateStart",t)},m.createSuccess=function(t,r){var e=r.data;e&&t.list.push(e),t.createError=null,t.isCreating=!1,i("onCreateSuccess",t,r)},m.createError=function(t,r){t.createError=r,t.isCreating=!1,i("onCreateError",t,r)}),u&&(m.destroyStart=function(t){t.isDestroying=!0,i("onDestroyStart",t)},m.destroySuccess=function(t,r){var e=t.list.findIndex(function(t){return t[c]===r});~e&&Vue.delete(t.list,e),t.destroyError=null,t.isDestroying=!1,i("onDestroySuccess",t,r)},m.destroyError=function(t,r){t.destroyError=r,t.isDestroying=!1,i("onDestroyError",t,r)}),l&&(m.fetchFiltersStart=function(t){t.isFetchingFilters=!0,i("onFetchFiltersStart",t)},m.fetchFiltersSuccess=function(t,r){var e=r.data.fields;t.filters=e,t.fetchFiltersError=null,t.isFetchingFilters=!1,i("onfetchFiltersSuccess",t,r)},m.fetchFiltersError=function(t,r){t.fetchFiltersError=r,t.isFetchingFilters=!1,i("onFetchFiltersError",t,r)}),f&&(m.fetchFormStart=function(t){t.isFetchingForm=!0,i("onFetchFormStart",t)},m.fetchFormSuccess=function(t,r){r.errors,r.fields;t.fetchFormError=null,t.isFetchingForm=!1,i("onfetchFormSuccess",t,response)},m.fetchFormError=function(t,r){t.fetchFormError=r,t.isFetchingForm=!1,i("onFetchFormError",t,r)}),h&&(m.fetchListStart=function(t){t.isFetchingList=!0,i("onFetchListStart",t)},m.fetchListSuccess=function(t){var r,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},c=e.response,s=e.increment,a=c.data,u=a.results,l=a.count;s?(r=t.list).push.apply(r,n(u)):t.list=u||[],t.totalPages=Math.ceil(l/o),t.fetchListError=null,t.isFetchingList=!1,i("onfetchListSuccess",t,c)},m.fetchListError=function(t){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},e=r.error;r.increment||(t.list=[]),t.fetchListError=e,t.isFetchingList=!1,i("onFetchListError",t,e)}),p&&(m.fetchSingleStart=function(t){t.isFetchingSingle=!0,i("onFetchSingleStart",t)},m.fetchSingleSuccess=function(t,r){var e=r.data.result;if(e){var n=t.list.findIndex(function(t){return t[c]===e[c]});~n?Vue.set(t.list,n,e):t.list.push(e)}t.fetchSingleError=null,t.isFetchingSingle=!1,i("onFetchSingleSuccess",t,r)},m.fetchSingleError=function(t,r){t.fetchSingleError=r,t.isFetchingSingle=!1,i("onFetchSingleError",t,r)}),g&&(m.replaceStart=function(t){t.isReplacing=!0,i("onReplaceStart",t)},m.replaceSuccess=function(t,r){var e=r.data,n=t.list.findIndex(function(t){return t[c]===e[c]});~n&&Vue.set(t.list,n,e),t.replaceError=null,t.isReplacing=!1,i("onReplaceSuccess",t,r)},m.replaceError=function(t,r){t.replaceError=r,t.isReplacing=!1,i("onReplaceError",t,r)}),d&&(m.updateStart=function(t){t.isUpdating=!0,i("onUpdateStart",t)},m.updateSuccess=function(t,e){var n=e.data;for(var o in t.list){var s=t.list[o];if(s[c]===n[c]){Vue.set(t.list,o,r(r({},s),n));break}}t.updateError=null,t.isUpdating=!1,i("onUpdateSuccess",t,e)},m.updateError=function(t,r){t.updateError=r,t.isUpdating=!1,i("onUpdateError",t,r)}),Object.assign(m,e.mutations||{});var F={};return a&&(F.create=function(r){var e=r.commit,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=n.payload,c=n.url;return e("createStart"),c=c||"/".concat(t,"/"),api.post(c,i).then(function(t){return e("createSuccess",t),t}).catch(function(t){return e("createError",t),Promise.reject(t)})}),u&&(F.destroy=function(r){var e=r.commit,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=n.id,c=n.params;return e("destroyStart"),api.delete("/".concat(t,"/").concat(i,"/"),{params:c}).then(function(t){return e("destroySuccess",i),t}).catch(function(t){return e("destroyError",t),Promise.reject(t)})}),l&&(F.fetchFilters=function(r){var n=r.commit,i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},c=i.params,o=i.url;return n("fetchFiltersStart"),o=o||e.fetchFiltersURL||"/".concat(t,"/filters/"),api.get(o,{params:c}).then(function(t){return n("fetchFiltersSuccess",t),t}).catch(function(t){return n("fetchFiltersError",t),Promise.reject(t)})}),f&&(F.fetchForm=function(r){var e=r.commit,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=n.id,c=n.params,o=n.url;return e("fetchFormStart"),o=o||"/".concat(t,"/").concat(i?"edit/".concat(i):"new","/"),api.get(o,{params:c}).then(function(t){return e("fetchFormSuccess",t),t}).catch(function(t){return e("fetchFormError",t),Promise.reject(t)})}),h&&(F.fetchList=function(n){var i=n.commit,c=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},s=c.filters,a=void 0===s?{}:s,u=c.increment,l=c.ordering,f=void 0===l?[]:l,h=c.page,p=void 0===h?1:h,g=c.limit,d=c.search,S=c.url,E=r(r({},a),{},{limit:g||o,offset:(p-1)*(g||o),ordering:f.length?f.join(","):null,search:d});return i("fetchListStart"),S=S||e.replaceURL||"/".concat(t,"/"),api.get(S,{params:E}).then(function(t){return i("fetchListSuccess",{response:t,increment:u}),t}).catch(function(t){return i("fetchListError",{error:t,increment:u}),Promise.reject(t)})}),p&&(F.fetchSingle=function(r){var n=r.commit,i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},c=i.form,o=i.id,s=i.params,a=i.url;return n("fetchSingleStart"),a=a||(c?"/".concat(t,"/").concat(o?"".concat(o,"/edit"):"new","/"):e.fetchSingleURL||"/".concat(t,"/").concat(o,"/")),api.get(a,{params:s}).then(function(t){return n("fetchSingleSuccess",t),t}).catch(function(t){return n("fetchSingleError",t),Promise.reject(t)})}),g&&(F.replace=function(r){var n=r.commit,i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},c=i.id,o=i.payload,s=i.url;return n("replaceStart"),s=s||e.replaceURL||"/".concat(t,"/").concat(c,"/"),api.put(s,o).then(function(t){return n("replaceSuccess",t),t}).catch(function(t){return n("replaceError",t),Promise.reject(t)})}),d&&(F.update=function(r){var e=r.commit,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=n.id,c=n.payload;return e("updateStart"),api.patch("/".concat(t,"/").concat(i),c).then(function(t){return e("updateSuccess",t),t}).catch(function(t){return e("updateError",t),Promise.reject(t)})}),Object.assign(F,e.actions||{}),{namespaced:!0,state:S,getters:E,mutations:m,actions:F}}}]),t}();exports.default=h;
-},{}]},{},["l6fb"], null)
-//# sourceMappingURL=/vuexStoreModule.js.map
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.VuexStoreModule = factory());
+}(this, (function () { 'use strict';
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
+
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  var _default = /*#__PURE__*/function () {
+    function _default() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, _default);
+
+      if (!options.apiService) {
+        throw new Error('Please provide an API service.');
+      } // set api config
+
+
+      this.api = options.apiService;
+    }
+
+    _createClass(_default, [{
+      key: "createStoreModule",
+      value: function createStoreModule(resource) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+        if (!resource) {
+          throw new Error('Resource name must be specified.');
+        }
+
+        function call(name) {
+          if (typeof options[name] === 'function') {
+            for (var _len = arguments.length, parameters = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+              parameters[_key - 1] = arguments[_key];
+            }
+
+            options[name](parameters);
+          }
+        }
+
+        var idAttribute = options.idAttribute || 'id';
+        var perPage = options.perPage || 12;
+        var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
+        var hasCreate = methods.includes('CREATE');
+        var hasDestroy = methods.includes('DESTROY');
+        var hasFetchFilters = methods.includes('FETCH_FILTERS');
+        var hasFetchForm = methods.includes('FETCH_FORM');
+        var hasFetchList = methods.includes('FETCH_LIST');
+        var hasFetchSingle = methods.includes('FETCH_SINGLE');
+        var hasReplace = methods.includes('REPLACE');
+        var hasUpdate = methods.includes('UPDATE'); // States
+
+        var stateData = {
+          filters: {},
+          list: [],
+          totalPages: 0
+        };
+
+        if (hasCreate) {
+          stateData.isFetchingSingle = false;
+          stateData.fetchSingleError = null;
+        }
+
+        if (hasDestroy) {
+          stateData.isDestroying = false;
+          stateData.destroyError = null;
+        }
+
+        if (hasFetchFilters) {
+          stateData.isFetchingFilters = false;
+          stateData.fetchFiltersError = null;
+        }
+
+        if (hasFetchForm) {
+          stateData.isFetchingForm = false;
+          stateData.fetchFormError = null;
+        }
+
+        if (hasFetchList) {
+          stateData.isFetchingList = false;
+          stateData.fetchListError = null;
+        }
+
+        if (hasFetchSingle) {
+          stateData.isFetchingSingle = false;
+          stateData.fetchSingleError = null;
+        }
+
+        if (hasReplace) {
+          stateData.isReplacing = false;
+          stateData.replaceError = null;
+        }
+
+        if (hasUpdate) {
+          stateData.isUpdating = false;
+          stateData.updateError = null;
+        }
+
+        Object.assign(stateData, options.state || {}); // Getters
+
+        var getters = {
+          list: function list(state) {
+            return state.list;
+          },
+          filters: function filters(state) {
+            return state.filters;
+          },
+          totalPages: function totalPages(state) {
+            return state.totalPages;
+          },
+          byId: function byId(state) {
+            return function (id) {
+              return state.list.find(function (item) {
+                return item[idAttribute] === id;
+              });
+            };
+          },
+          isLoading: function isLoading(state) {
+            return state.isCreating || state.isDestroying || state.isFetchingFilters || state.isFetchingList || state.isFetchingSingle || state.isReplacing || state.isUpdating;
+          },
+          hasErrors: function hasErrors(state) {
+            return state.createError !== null || state.destroyError !== null || state.fetchFormError !== null || state.fetchFiltersError !== null || state.fetchListError !== null || state.fetchSingleError !== null || state.replaceError !== null || state.updateError !== null;
+          }
+        };
+        Object.assign(getters, options.getters || {}); // Mutations
+
+        var mutations = {};
+
+        if (hasCreate) {
+          mutations.createStart = function (state) {
+            state.isCreating = true;
+            call('onCreateStart', state);
+          };
+
+          mutations.createSuccess = function (state, response) {
+            var data = response.data;
+
+            if (data) {
+              state.list.push(data);
+            }
+
+            state.createError = null;
+            state.isCreating = false;
+            call('onCreateSuccess', state, response);
+          };
+
+          mutations.createError = function (state, error) {
+            state.createError = error;
+            state.isCreating = false;
+            call('onCreateError', state, error);
+          };
+        }
+
+        if (hasDestroy) {
+          mutations.destroyStart = function (state) {
+            state.isDestroying = true;
+            call('onDestroyStart', state);
+          };
+
+          mutations.destroySuccess = function (state, id) {
+            var index = state.list.findIndex(function (item) {
+              return item[idAttribute] === id;
+            });
+
+            if (~index) {
+              Vue["delete"](state.list, index);
+            }
+
+            state.destroyError = null;
+            state.isDestroying = false;
+            call('onDestroySuccess', state, id);
+          };
+
+          mutations.destroyError = function (state, error) {
+            state.destroyError = error;
+            state.isDestroying = false;
+            call('onDestroyError', state, error);
+          };
+        }
+
+        if (hasFetchFilters) {
+          mutations.fetchFiltersStart = function (state) {
+            state.isFetchingFilters = true;
+            call('onFetchFiltersStart', state);
+          };
+
+          mutations.fetchFiltersSuccess = function (state, response) {
+            var fields = response.data.fields;
+            state.filters = fields;
+            state.fetchFiltersError = null;
+            state.isFetchingFilters = false;
+            call('onfetchFiltersSuccess', state, response);
+          };
+
+          mutations.fetchFiltersError = function (state, error) {
+            state.fetchFiltersError = error;
+            state.isFetchingFilters = false;
+            call('onFetchFiltersError', state, error);
+          };
+        }
+
+        if (hasFetchForm) {
+          mutations.fetchFormStart = function (state) {
+            state.isFetchingForm = true;
+            call('onFetchFormStart', state);
+          };
+
+          mutations.fetchFormSuccess = function (state, _ref) {
+            var errors = _ref.errors,
+                fields = _ref.fields;
+            state.fetchFormError = null;
+            state.isFetchingForm = false;
+            call('onfetchFormSuccess', state, response);
+          };
+
+          mutations.fetchFormError = function (state, error) {
+            state.fetchFormError = error;
+            state.isFetchingForm = false;
+            call('onFetchFormError', state, error);
+          };
+        }
+
+        if (hasFetchList) {
+          mutations.fetchListStart = function (state) {
+            state.isFetchingList = true;
+            call('onFetchListStart', state);
+          };
+
+          mutations.fetchListSuccess = function (state) {
+            var _state$list;
+
+            var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var response = payload.response,
+                increment = payload.increment;
+            var _response$data = response.data,
+                results = _response$data.results,
+                count = _response$data.count;
+            increment ? (_state$list = state.list).push.apply(_state$list, _toConsumableArray(results)) : state.list = results || [];
+            state.totalPages = Math.ceil(count / perPage);
+            state.fetchListError = null;
+            state.isFetchingList = false;
+            call('onfetchListSuccess', state, response);
+          };
+
+          mutations.fetchListError = function (state) {
+            var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var error = payload.error,
+                increment = payload.increment;
+
+            if (!increment) {
+              state.list = [];
+            }
+
+            state.fetchListError = error;
+            state.isFetchingList = false;
+            call('onFetchListError', state, error);
+          };
+        }
+
+        if (hasFetchSingle) {
+          mutations.fetchSingleStart = function (state) {
+            state.isFetchingSingle = true;
+            call('onFetchSingleStart', state);
+          };
+
+          mutations.fetchSingleSuccess = function (state, response) {
+            var result = response.data.result;
+
+            if (result) {
+              var index = state.list.findIndex(function (item) {
+                return item[idAttribute] === result[idAttribute];
+              });
+              ~index ? Vue.set(state.list, index, result) : state.list.push(result);
+            }
+
+            state.fetchSingleError = null;
+            state.isFetchingSingle = false;
+            call('onFetchSingleSuccess', state, response);
+          };
+
+          mutations.fetchSingleError = function (state, error) {
+            state.fetchSingleError = error;
+            state.isFetchingSingle = false;
+            call('onFetchSingleError', state, error);
+          };
+        }
+
+        if (hasReplace) {
+          mutations.replaceStart = function (state) {
+            state.isReplacing = true;
+            call('onReplaceStart', state);
+          };
+
+          mutations.replaceSuccess = function (state, response) {
+            var data = response.data;
+            var index = state.list.findIndex(function (item) {
+              return item[idAttribute] === data[idAttribute];
+            });
+
+            if (~index) {
+              Vue.set(state.list, index, data);
+            }
+
+            state.replaceError = null;
+            state.isReplacing = false;
+            call('onReplaceSuccess', state, response);
+          };
+
+          mutations.replaceError = function (state, error) {
+            state.replaceError = error;
+            state.isReplacing = false;
+            call('onReplaceError', state, error);
+          };
+        }
+
+        if (hasUpdate) {
+          mutations.updateStart = function (state) {
+            state.isUpdating = true;
+            call('onUpdateStart', state);
+          };
+
+          mutations.updateSuccess = function (state, response) {
+            var data = response.data;
+
+            for (var index in state.list) {
+              var item = state.list[index];
+
+              if (item[idAttribute] === data[idAttribute]) {
+                Vue.set(state.list, index, _objectSpread2(_objectSpread2({}, item), data));
+                break;
+              }
+            }
+
+            state.updateError = null;
+            state.isUpdating = false;
+            call('onUpdateSuccess', state, response);
+          };
+
+          mutations.updateError = function (state, error) {
+            state.updateError = error;
+            state.isUpdating = false;
+            call('onUpdateError', state, error);
+          };
+        }
+
+        Object.assign(mutations, options.mutations || {}); // Actions
+
+        var actions = {};
+
+        if (hasCreate) {
+          actions.create = function (_ref2) {
+            var commit = _ref2.commit;
+
+            var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                payload = _ref3.payload,
+                url = _ref3.url;
+
+            commit('createStart');
+            url = url || "/".concat(resource, "/");
+            return api.post(url, payload).then(function (response) {
+              commit('createSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('createError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasDestroy) {
+          actions.destroy = function (_ref4) {
+            var commit = _ref4.commit;
+
+            var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref5.id,
+                params = _ref5.params;
+
+            commit('destroyStart');
+            return api["delete"]("/".concat(resource, "/").concat(id, "/"), {
+              params: params
+            }).then(function (response) {
+              commit('destroySuccess', id);
+              return response;
+            })["catch"](function (error) {
+              commit('destroyError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasFetchFilters) {
+          actions.fetchFilters = function (_ref6) {
+            var commit = _ref6.commit;
+
+            var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                params = _ref7.params,
+                url = _ref7.url;
+
+            commit('fetchFiltersStart');
+            url = url || options.fetchFiltersURL || "/".concat(resource, "/filters/");
+            return api.get(url, {
+              params: params
+            }).then(function (response) {
+              commit('fetchFiltersSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('fetchFiltersError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasFetchForm) {
+          actions.fetchForm = function (_ref8) {
+            var commit = _ref8.commit;
+
+            var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref9.id,
+                params = _ref9.params,
+                url = _ref9.url;
+
+            commit('fetchFormStart');
+            url = url || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
+            return api.get(url, {
+              params: params
+            }).then(function (response) {
+              commit('fetchFormSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('fetchFormError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasFetchList) {
+          actions.fetchList = function (_ref10) {
+            var commit = _ref10.commit;
+
+            var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                _ref11$filters = _ref11.filters,
+                filters = _ref11$filters === void 0 ? {} : _ref11$filters,
+                increment = _ref11.increment,
+                _ref11$ordering = _ref11.ordering,
+                ordering = _ref11$ordering === void 0 ? [] : _ref11$ordering,
+                _ref11$page = _ref11.page,
+                page = _ref11$page === void 0 ? 1 : _ref11$page,
+                limit = _ref11.limit,
+                search = _ref11.search,
+                url = _ref11.url;
+
+            var params = _objectSpread2(_objectSpread2({}, filters), {}, {
+              limit: limit || perPage,
+              offset: (page - 1) * (limit || perPage),
+              ordering: ordering.length ? ordering.join(',') : null,
+              search: search
+            });
+
+            commit('fetchListStart');
+            url = url || options.replaceURL || "/".concat(resource, "/");
+            return api.get(url, {
+              params: params
+            }).then(function (response) {
+              commit('fetchListSuccess', {
+                response: response,
+                increment: increment
+              });
+              return response;
+            })["catch"](function (error) {
+              commit('fetchListError', {
+                error: error,
+                increment: increment
+              });
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasFetchSingle) {
+          actions.fetchSingle = function (_ref12) {
+            var commit = _ref12.commit;
+
+            var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                form = _ref13.form,
+                id = _ref13.id,
+                params = _ref13.params,
+                url = _ref13.url;
+
+            commit('fetchSingleStart');
+            url = url || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : options.fetchSingleURL || "/".concat(resource, "/").concat(id, "/"));
+            return api.get(url, {
+              params: params
+            }).then(function (response) {
+              commit('fetchSingleSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('fetchSingleError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasReplace) {
+          actions.replace = function (_ref14) {
+            var commit = _ref14.commit;
+
+            var _ref15 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref15.id,
+                payload = _ref15.payload,
+                url = _ref15.url;
+
+            commit('replaceStart');
+            url = url || options.replaceURL || "/".concat(resource, "/").concat(id, "/");
+            return api.put(url, payload).then(function (response) {
+              commit('replaceSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('replaceError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasUpdate) {
+          actions.update = function (_ref16) {
+            var commit = _ref16.commit;
+
+            var _ref17 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref17.id,
+                payload = _ref17.payload;
+
+            commit('updateStart');
+            return api.patch("/".concat(resource, "/").concat(id), payload).then(function (response) {
+              commit('updateSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('updateError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        Object.assign(actions, options.actions || {});
+        return {
+          namespaced: true,
+          state: stateData,
+          getters: getters,
+          mutations: mutations,
+          actions: actions
+        };
+      }
+    }]);
+
+    return _default;
+  }();
+
+  return _default;
+
+})));

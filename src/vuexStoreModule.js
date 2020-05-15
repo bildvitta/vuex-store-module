@@ -1,5 +1,3 @@
-// import Vue from 'vue'
-
 export default class {
   constructor (options = {}) {
     if (!options.apiService) {
