@@ -11,6 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@bildvitta"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bildvitta/vuex-store-module.git"
