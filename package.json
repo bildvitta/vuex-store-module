@@ -1,6 +1,6 @@
 {
   "name": "@bildvitta/vuex-store-module",
-  "version": "0.0.8",
+  "version": "0.0.8-beta.0",
   "description": "A generic Vuex store module for keep it simple. Use your time for what you really needs.",
   "keywords": [
     "vue",
