@@ -116,7 +116,7 @@
 
       if (!options.apiService) {
         throw new Error('Please provide an API service.');
-      } // set api config
+      } // set this.api config
 
 
       this.api = options.apiService;
@@ -125,6 +125,8 @@
     _createClass(_default, [{
       key: "createStoreModule",
       value: function createStoreModule(resource) {
+        var _this = this;
+
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if (!resource) {
@@ -460,7 +462,7 @@
 
             commit('createStart');
             url = url || "/".concat(resource, "/");
-            return api.post(url, payload).then(function (response) {
+            return _this.api.post(url, payload).then(function (response) {
               commit('createSuccess', response);
               return response;
             })["catch"](function (error) {
@@ -479,7 +481,7 @@
                 params = _ref5.params;
 
             commit('destroyStart');
-            return api["delete"]("/".concat(resource, "/").concat(id, "/"), {
+            return _this.api["delete"]("/".concat(resource, "/").concat(id, "/"), {
               params: params
             }).then(function (response) {
               commit('destroySuccess', id);
@@ -501,7 +503,7 @@
 
             commit('fetchFiltersStart');
             url = url || options.fetchFiltersURL || "/".concat(resource, "/filters/");
-            return api.get(url, {
+            return _this.api.get(url, {
               params: params
             }).then(function (response) {
               commit('fetchFiltersSuccess', response);
@@ -524,7 +526,7 @@
 
             commit('fetchFormStart');
             url = url || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
-            return api.get(url, {
+            return _this.api.get(url, {
               params: params
             }).then(function (response) {
               commit('fetchFormSuccess', response);
@@ -561,7 +563,7 @@
 
             commit('fetchListStart');
             url = url || options.replaceURL || "/".concat(resource, "/");
-            return api.get(url, {
+            return _this.api.get(url, {
               params: params
             }).then(function (response) {
               commit('fetchListSuccess', {
@@ -591,7 +593,7 @@
 
             commit('fetchSingleStart');
             url = url || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : options.fetchSingleURL || "/".concat(resource, "/").concat(id, "/"));
-            return api.get(url, {
+            return _this.api.get(url, {
               params: params
             }).then(function (response) {
               commit('fetchSingleSuccess', response);
@@ -614,7 +616,7 @@
 
             commit('replaceStart');
             url = url || options.replaceURL || "/".concat(resource, "/").concat(id, "/");
-            return api.put(url, payload).then(function (response) {
+            return _this.api.put(url, payload).then(function (response) {
               commit('replaceSuccess', response);
               return response;
             })["catch"](function (error) {
@@ -633,7 +635,7 @@
                 payload = _ref17.payload;
 
             commit('updateStart');
-            return api.patch("/".concat(resource, "/").concat(id), payload).then(function (response) {
+            return _this.api.patch("/".concat(resource, "/").concat(id), payload).then(function (response) {
               commit('updateSuccess', response);
               return response;
             })["catch"](function (error) {

@@ -4,7 +4,7 @@ export default class {
       throw new Error('Please provide an API service.')
     }
 
-    // set api config
+    // set this.api config
     this.api = options.apiService
   }
 
@@ -350,7 +350,7 @@ export default class {
         commit('createStart')
         url = url || `/${resource}/`
   
-        return api.post(url, payload).then(response => {
+        return this.api.post(url, payload).then(response => {
           commit('createSuccess', response)
           return response
         }).catch(error => {
@@ -364,7 +364,7 @@ export default class {
       actions.destroy = ({ commit }, { id, params } = {}) => {
         commit('destroyStart')
 
-        return api.delete(`/${resource}/${id}/`, { params }).then(response => {
+        return this.api.delete(`/${resource}/${id}/`, { params }).then(response => {
           commit('destroySuccess', id)
           return response
         }).catch(error => {
@@ -379,7 +379,7 @@ export default class {
         commit('fetchFiltersStart')
         url = url || options.fetchFiltersURL || `/${resource}/filters/`
   
-        return api.get(url, { params }).then(response => {
+        return this.api.get(url, { params }).then(response => {
           commit('fetchFiltersSuccess', response)
           return response
         }).catch(error => {
@@ -394,7 +394,7 @@ export default class {
         commit('fetchFormStart')
         url = url || `/${resource}/${id ? `edit/${id}` : 'new'}/`
 
-        return api.get(url, { params }).then(response => {
+        return this.api.get(url, { params }).then(response => {
           commit('fetchFormSuccess', response)
           return response
         }).catch(error => {
@@ -420,7 +420,7 @@ export default class {
         commit('fetchListStart')
         url = url || options.replaceURL || `/${resource}/`
 
-        return api.get(url, { params }).then(response => {
+        return this.api.get(url, { params }).then(response => {
           commit('fetchListSuccess', { response, increment })
           return response
         }).catch(error => {
@@ -438,7 +438,7 @@ export default class {
           ? `/${resource}/${id ? `${id}/edit` : 'new'}/`
           : options.fetchSingleURL || `/${resource}/${id}/`)
 
-        return api.get(url, { params }).then(response => {
+        return this.api.get(url, { params }).then(response => {
           commit('fetchSingleSuccess', response)
           return response
         }).catch(error => {
@@ -453,7 +453,7 @@ export default class {
         commit('replaceStart')
         url = url || options.replaceURL || `/${resource}/${id}/`
 
-        return api.put(url, payload).then(response => {
+        return this.api.put(url, payload).then(response => {
           commit('replaceSuccess', response)
           return response
         }).catch(error => {
@@ -467,7 +467,7 @@ export default class {
       actions.update = ({ commit }, { id, payload } = {}) => {
         commit('updateStart')
 
-        return api.patch(`/${resource}/${id}`, payload).then(response => {
+        return this.api.patch(`/${resource}/${id}`, payload).then(response => {
           commit('updateSuccess', response)
           return response
         }).catch(error => {
