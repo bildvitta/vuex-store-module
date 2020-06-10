@@ -7,7 +7,7 @@
 ### Installation
 
 ```
-npm i vuex-store-module
+npm i @bildvitta/vuex-store-module
 ```
 
 ### Usage
@@ -15,7 +15,7 @@ npm i vuex-store-module
 To use the `VuexStoreModule` you have to setup the API, you can pass an instance of axios or another API like axios.
 
 ```js
-import VuexStoreModule from 'vuex-store-module'
+import VuexStoreModule from '@bildvitta/vuex-store-module'
 import axios from 'axios'
 
 const storeModule = new VuexStoreModule({ apiService: axios })
