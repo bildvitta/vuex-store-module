@@ -1,4 +1,4 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 
 export default class {
   constructor (options = {}) {
@@ -165,7 +165,8 @@ export default class {
         const index = state.list.findIndex(item => item[idAttribute] === id)
 
         if (~index) {
-          Vue.delete(state.list, index)
+          // Vue.delete(state.list, index)
+          state.list.splice(index, 1)
         }
 
         state.destroyError = null
@@ -268,7 +269,8 @@ export default class {
             item => item[idAttribute] === result[idAttribute]
           )
 
-          ~index ? Vue.set(state.list, index, result) : state.list.push(result)
+          // ~index ? Vue.set(state.list, index, result) : state.list.push(result)
+          ~index ? state.list.splice(index, 1, result) : state.list.push(result)
         }
 
         state.fetchSingleError = null
@@ -297,7 +299,8 @@ export default class {
         )
 
         if (~index) {
-          Vue.set(state.list, index, data)
+          // Vue.set(state.list, index, data)
+          state.list.splice(index, 1, data)
         }
 
         state.replaceError = null
@@ -325,7 +328,8 @@ export default class {
           const item = state.list[index]
 
           if (item[idAttribute] === data[idAttribute]) {
-            Vue.set(state.list, index, { ...item, ...data })
+            // Vue.set(state.list, index, { ...item, ...data })
+            state.list.splice(index, 1, { ...item, ...data })
             break
           }
         }

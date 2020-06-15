@@ -1,10 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vue')) :
-  typeof define === 'function' && define.amd ? define(['vue'], factory) :
-  (global = global || self, global.VuexStoreModule = factory(global.Vue));
-}(this, (function (Vue) { 'use strict';
-
-  Vue = Vue && Object.prototype.hasOwnProperty.call(Vue, 'default') ? Vue['default'] : Vue;
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.VuexStoreModule = factory());
+}(this, (function () { 'use strict';
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -110,6 +108,7 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
+  // import Vue from 'vue'
   var _default = /*#__PURE__*/function () {
     function _default() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -270,7 +269,8 @@
             });
 
             if (~index) {
-              Vue["delete"](state.list, index);
+              // Vue.delete(state.list, index)
+              state.list.splice(index, 1);
             }
 
             state.destroyError = null;
@@ -376,8 +376,9 @@
             if (result) {
               var index = state.list.findIndex(function (item) {
                 return item[idAttribute] === result[idAttribute];
-              });
-              ~index ? Vue.set(state.list, index, result) : state.list.push(result);
+              }); // ~index ? Vue.set(state.list, index, result) : state.list.push(result)
+
+              ~index ? state.list.splice(index, 1, result) : state.list.push(result);
             }
 
             state.fetchSingleError = null;
@@ -405,7 +406,8 @@
             });
 
             if (~index) {
-              Vue.set(state.list, index, data);
+              // Vue.set(state.list, index, data)
+              state.list.splice(index, 1, data);
             }
 
             state.replaceError = null;
@@ -433,7 +435,8 @@
               var item = state.list[index];
 
               if (item[idAttribute] === data[idAttribute]) {
-                Vue.set(state.list, index, _objectSpread2(_objectSpread2({}, item), data));
+                // Vue.set(state.list, index, { ...item, ...data })
+                state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
                 break;
               }
             }
