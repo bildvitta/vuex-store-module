@@ -108,7 +108,6 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  // import Vue from 'vue'
   var _default = /*#__PURE__*/function () {
     function _default() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -269,7 +268,6 @@
             });
 
             if (~index) {
-              // Vue.delete(state.list, index)
               state.list.splice(index, 1);
             }
 
@@ -376,9 +374,14 @@
             if (result) {
               var index = state.list.findIndex(function (item) {
                 return item[idAttribute] === result[idAttribute];
-              }); // ~index ? Vue.set(state.list, index, result) : state.list.push(result)
+              });
 
-              ~index ? state.list.splice(index, 1, result) : state.list.push(result);
+              if (~index) {
+                state.list[index] = result;
+                return;
+              }
+
+              state.list.push(result);
             }
 
             state.fetchSingleError = null;
@@ -406,8 +409,7 @@
             });
 
             if (~index) {
-              // Vue.set(state.list, index, data)
-              state.list.splice(index, 1, data);
+              state.list[index] = data;
             }
 
             state.replaceError = null;
@@ -435,8 +437,7 @@
               var item = state.list[index];
 
               if (item[idAttribute] === data[idAttribute]) {
-                // Vue.set(state.list, index, { ...item, ...data })
-                state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
+                state.list[index] = _objectSpread2(_objectSpread2({}, item), data);
                 break;
               }
             }

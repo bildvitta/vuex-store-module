@@ -1,5 +1,3 @@
-// import Vue from 'vue'
-
 export default class {
   constructor (options = {}) {
     if (!options.apiService) {
@@ -165,7 +163,6 @@ export default class {
         const index = state.list.findIndex(item => item[idAttribute] === id)
 
         if (~index) {
-          // Vue.delete(state.list, index)
           state.list.splice(index, 1)
         }
 
@@ -269,8 +266,12 @@ export default class {
             item => item[idAttribute] === result[idAttribute]
           )
 
-          // ~index ? Vue.set(state.list, index, result) : state.list.push(result)
-          ~index ? state.list.splice(index, 1, result) : state.list.push(result)
+          if (~index) {
+            state.list[index] = result
+            return
+          }
+
+          state.list.push(result)
         }
 
         state.fetchSingleError = null
@@ -299,8 +300,7 @@ export default class {
         )
 
         if (~index) {
-          // Vue.set(state.list, index, data)
-          state.list.splice(index, 1, data)
+          state.list[index] = data
         }
 
         state.replaceError = null
@@ -328,8 +328,7 @@ export default class {
           const item = state.list[index]
 
           if (item[idAttribute] === data[idAttribute]) {
-            // Vue.set(state.list, index, { ...item, ...data })
-            state.list.splice(index, 1, { ...item, ...data })
+            state.list[index] = { ...item, ...data }
             break
           }
         }
