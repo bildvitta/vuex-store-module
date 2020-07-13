@@ -267,7 +267,7 @@ export default class {
           )
 
           if (~index) {
-            state.list[index] = result
+            state.list.splice(index, 1, result)
             return
           }
 
@@ -300,7 +300,7 @@ export default class {
         )
 
         if (~index) {
-          state.list[index] = data
+          state.splice(index, 1, data)
         }
 
         state.replaceError = null
@@ -328,7 +328,7 @@ export default class {
           const item = state.list[index]
 
           if (item[idAttribute] === data[idAttribute]) {
-            state.list[index] = { ...item, ...data }
+            state.list.splice(index, 1, { ...item, ...data })
             break
           }
         }
