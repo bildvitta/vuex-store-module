@@ -377,7 +377,7 @@
               });
 
               if (~index) {
-                state.list[index] = result;
+                state.list.splice(index, 1, result);
                 return;
               }
 
@@ -409,7 +409,7 @@
             });
 
             if (~index) {
-              state.list[index] = data;
+              state.splice(index, 1, data);
             }
 
             state.replaceError = null;
@@ -437,7 +437,7 @@
               var item = state.list[index];
 
               if (item[idAttribute] === data[idAttribute]) {
-                state.list[index] = _objectSpread2(_objectSpread2({}, item), data);
+                state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
                 break;
               }
             }
