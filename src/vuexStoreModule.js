@@ -6,6 +6,7 @@ export default class {
 
     // set this.api config
     this.api = options.apiService
+    this.idAttribute = options.idAttribute
   }
 
   createStoreModule (resource, options = {}) {
@@ -19,7 +20,7 @@ export default class {
       }
     }
 
-    const idAttribute = options.idAttribute || 'id'
+    const idAttribute = options.idAttribute || this.idAttribute || 'id'
     const perPage = options.perPage || 12
 
     const methods = options.methods || [
