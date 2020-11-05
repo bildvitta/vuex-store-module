@@ -3,12 +3,12 @@
 ## 0.0.21 (11-05-2020)
 
 - changed:
-  - fixed splice in fixed splice in replaceSuccess
+  - fixed splice in replaceSuccess
 
 ## 0.0.20 (11-05-2020)
 
 - changed:
-  - fixed splice in fixed splice in replaceStart
+  - fixed splice in replaceStart
 
 
 ## 0.0.19 (11-05-2020)
