@@ -301,7 +301,7 @@ export default class {
         )
 
         if (~index) {
-          state.splice(index, 1, data)
+          state.index.splice(index, 1, data)
         }
 
         state.replaceError = null
