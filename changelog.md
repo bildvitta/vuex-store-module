@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.20 (11-05-2020)
+
+- changed:
+  - fixed splice in fixed splice in replaceStart
+
+
 ## 0.0.19 (11-05-2020)
 
 - features:
