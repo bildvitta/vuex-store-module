@@ -120,6 +120,7 @@
 
 
       this.api = options.apiService;
+      this.idAttribute = options.idAttribute;
     }
 
     _createClass(_default, [{
@@ -143,7 +144,7 @@
           }
         }
 
-        var idAttribute = options.idAttribute || 'id';
+        var idAttribute = options.idAttribute || this.idAttribute || 'id';
         var perPage = options.perPage || 12;
         var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
         var hasCreate = methods.includes('CREATE');
@@ -409,7 +410,7 @@
             });
 
             if (~index) {
-              state.splice(index, 1, data);
+              state.list.splice(index, 1, data);
             }
 
             state.replaceError = null;
