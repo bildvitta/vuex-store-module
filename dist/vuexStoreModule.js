@@ -1,8 +1,46 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.VuexStoreModule = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.VuexStoreModule = factory());
 }(this, (function () { 'use strict';
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+
+      if (enumerableOnly) {
+        symbols = symbols.filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        });
+      }
+
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -41,40 +79,6 @@
     return obj;
   }
 
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
   function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
@@ -84,7 +88,7 @@
   }
 
   function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
   }
 
   function _unsupportedIterableToArray(o, minLen) {
@@ -120,7 +124,7 @@
 
 
       this.api = options.apiService;
-      this.idAttribute = options.idAttribute;
+      this.idKey = options.idKey;
     }
 
     _createClass(_default, [{
@@ -144,7 +148,15 @@
           }
         }
 
-        var idAttribute = options.idAttribute || this.idAttribute || 'id';
+        function run(fn) {
+          for (var _len2 = arguments.length, parameters = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            parameters[_key2 - 1] = arguments[_key2];
+          }
+
+          return typeof fn === 'function' ? fn.apply(void 0, parameters) : fn;
+        }
+
+        var idKey = options.idKey || this.idKey || 'id';
         var perPage = options.perPage || 12;
         var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
         var hasCreate = methods.includes('CREATE');
@@ -217,7 +229,7 @@
           byId: function byId(state) {
             return function (id) {
               return state.list.find(function (item) {
-                return item[idAttribute] === id;
+                return item[idKey] === id;
               });
             };
           },
@@ -265,7 +277,7 @@
 
           mutations.destroySuccess = function (state, id) {
             var index = state.list.findIndex(function (item) {
-              return item[idAttribute] === id;
+              return item[idKey] === id;
             });
 
             if (~index) {
@@ -311,9 +323,7 @@
             call('onFetchFormStart', state);
           };
 
-          mutations.fetchFormSuccess = function (state, _ref) {
-            var errors = _ref.errors,
-                fields = _ref.fields;
+          mutations.fetchFormSuccess = function (state, response) {
             state.fetchFormError = null;
             state.isFetchingForm = false;
             call('onfetchFormSuccess', state, response);
@@ -374,7 +384,7 @@
 
             if (result) {
               var index = state.list.findIndex(function (item) {
-                return item[idAttribute] === result[idAttribute];
+                return item[idKey] === result[idKey];
               });
 
               if (~index) {
@@ -406,7 +416,7 @@
           mutations.replaceSuccess = function (state, response) {
             var data = response.data;
             var index = state.list.findIndex(function (item) {
-              return item[idAttribute] === data[idAttribute];
+              return item[idKey] === data[idKey];
             });
 
             if (~index) {
@@ -437,7 +447,7 @@
             for (var index in state.list) {
               var item = state.list[index];
 
-              if (item[idAttribute] === data[idAttribute]) {
+              if (item[idKey] === data[idKey]) {
                 state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
                 break;
               }
@@ -460,15 +470,15 @@
         var actions = {};
 
         if (hasCreate) {
-          actions.create = function (_ref2) {
-            var commit = _ref2.commit;
+          actions.create = function (_ref) {
+            var commit = _ref.commit;
 
-            var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                payload = _ref3.payload,
-                url = _ref3.url;
+            var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                payload = _ref2.payload,
+                url = _ref2.url;
 
             commit('createStart');
-            url = url || "/".concat(resource, "/");
+            url = url || options.createURL || "/".concat(resource, "/");
             return _this.api.post(url, payload).then(function (response) {
               commit('createSuccess', response);
               return response;
@@ -480,15 +490,19 @@
         }
 
         if (hasDestroy) {
-          actions.destroy = function (_ref4) {
-            var commit = _ref4.commit;
+          actions.destroy = function (_ref3) {
+            var commit = _ref3.commit;
 
-            var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref5.id,
-                params = _ref5.params;
+            var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref4.id,
+                params = _ref4.params,
+                url = _ref4.url;
 
             commit('destroyStart');
-            return _this.api["delete"]("/".concat(resource, "/").concat(id, "/"), {
+            url = run(url || options.destroyURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id, "/");
+            return _this.api["delete"](url, {
               params: params
             }).then(function (response) {
               commit('destroySuccess', id);
@@ -501,12 +515,12 @@
         }
 
         if (hasFetchFilters) {
-          actions.fetchFilters = function (_ref6) {
-            var commit = _ref6.commit;
+          actions.fetchFilters = function (_ref5) {
+            var commit = _ref5.commit;
 
-            var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                params = _ref7.params,
-                url = _ref7.url;
+            var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                params = _ref6.params,
+                url = _ref6.url;
 
             commit('fetchFiltersStart');
             url = url || options.fetchFiltersURL || "/".concat(resource, "/filters/");
@@ -523,16 +537,18 @@
         }
 
         if (hasFetchForm) {
-          actions.fetchForm = function (_ref8) {
-            var commit = _ref8.commit;
+          actions.fetchForm = function (_ref7) {
+            var commit = _ref7.commit;
 
-            var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref9.id,
-                params = _ref9.params,
-                url = _ref9.url;
+            var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref8.id,
+                params = _ref8.params,
+                url = _ref8.url;
 
             commit('fetchFormStart');
-            url = url || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
+            url = run(url || options.fetchFormURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -546,20 +562,20 @@
         }
 
         if (hasFetchList) {
-          actions.fetchList = function (_ref10) {
-            var commit = _ref10.commit;
+          actions.fetchList = function (_ref9) {
+            var commit = _ref9.commit;
 
-            var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                _ref11$filters = _ref11.filters,
-                filters = _ref11$filters === void 0 ? {} : _ref11$filters,
-                increment = _ref11.increment,
-                _ref11$ordering = _ref11.ordering,
-                ordering = _ref11$ordering === void 0 ? [] : _ref11$ordering,
-                _ref11$page = _ref11.page,
-                page = _ref11$page === void 0 ? 1 : _ref11$page,
-                limit = _ref11.limit,
-                search = _ref11.search,
-                url = _ref11.url;
+            var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                _ref10$filters = _ref10.filters,
+                filters = _ref10$filters === void 0 ? {} : _ref10$filters,
+                increment = _ref10.increment,
+                _ref10$ordering = _ref10.ordering,
+                ordering = _ref10$ordering === void 0 ? [] : _ref10$ordering,
+                _ref10$page = _ref10.page,
+                page = _ref10$page === void 0 ? 1 : _ref10$page,
+                limit = _ref10.limit,
+                search = _ref10.search,
+                url = _ref10.url;
 
             var params = _objectSpread2(_objectSpread2({}, filters), {}, {
               limit: limit || perPage,
@@ -569,7 +585,7 @@
             });
 
             commit('fetchListStart');
-            url = url || options.replaceURL || "/".concat(resource, "/");
+            url = url || options.fetchListURL || "/".concat(resource, "/");
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -589,17 +605,20 @@
         }
 
         if (hasFetchSingle) {
-          actions.fetchSingle = function (_ref12) {
-            var commit = _ref12.commit;
+          actions.fetchSingle = function (_ref11) {
+            var commit = _ref11.commit;
 
-            var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                form = _ref13.form,
-                id = _ref13.id,
-                params = _ref13.params,
-                url = _ref13.url;
+            var _ref12 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                form = _ref12.form,
+                id = _ref12.id,
+                params = _ref12.params,
+                url = _ref12.url;
 
             commit('fetchSingleStart');
-            url = url || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : options.fetchSingleURL || "/".concat(resource, "/").concat(id, "/"));
+            url = run(url || options.fetchSingleURL, {
+              form: form,
+              id: id
+            }) || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : "/".concat(resource, "/").concat(id, "/"));
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -613,16 +632,18 @@
         }
 
         if (hasReplace) {
-          actions.replace = function (_ref14) {
-            var commit = _ref14.commit;
+          actions.replace = function (_ref13) {
+            var commit = _ref13.commit;
 
-            var _ref15 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref15.id,
-                payload = _ref15.payload,
-                url = _ref15.url;
+            var _ref14 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref14.id,
+                payload = _ref14.payload,
+                url = _ref14.url;
 
             commit('replaceStart');
-            url = url || options.replaceURL || "/".concat(resource, "/").concat(id, "/");
+            url = run(url || options.replaceURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id, "/");
             return _this.api.put(url, payload).then(function (response) {
               commit('replaceSuccess', response);
               return response;
@@ -634,15 +655,19 @@
         }
 
         if (hasUpdate) {
-          actions.update = function (_ref16) {
-            var commit = _ref16.commit;
+          actions.update = function (_ref15) {
+            var commit = _ref15.commit;
 
-            var _ref17 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref17.id,
-                payload = _ref17.payload;
+            var _ref16 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref16.id,
+                payload = _ref16.payload,
+                url = _ref16.url;
 
             commit('updateStart');
-            return _this.api.patch("/".concat(resource, "/").concat(id), payload).then(function (response) {
+            url = run(url || options.updateURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id, "/");
+            return _this.api.patch(url, payload).then(function (response) {
               commit('updateSuccess', response);
               return response;
             })["catch"](function (error) {

@@ -6,7 +6,7 @@ export default class {
 
     // set this.api config
     this.api = options.apiService
-    this.idAttribute = options.idAttribute
+    this.idKey = options.idKey
   }
 
   createStoreModule (resource, options = {}) {
@@ -20,7 +20,11 @@ export default class {
       }
     }
 
-    const idAttribute = options.idAttribute || this.idAttribute || 'id'
+    function run (fn, ...parameters) {
+      return typeof fn === 'function' ? fn(...parameters) : fn
+    }
+
+    const idKey = options.idKey || this.idKey || 'id'
     const perPage = options.perPage || 12
 
     const methods = options.methods || [
@@ -100,7 +104,7 @@ export default class {
 
       totalPages: state => state.totalPages,
   
-      byId: state => id => state.list.find(item => item[idAttribute] === id),
+      byId: state => id => state.list.find(item => item[idKey] === id),
 
       isLoading: state => (
         state.isCreating ||
@@ -161,7 +165,7 @@ export default class {
       }
   
       mutations.destroySuccess = (state, id) => {
-        const index = state.list.findIndex(item => item[idAttribute] === id)
+        const index = state.list.findIndex(item => item[idKey] === id)
 
         if (~index) {
           state.list.splice(index, 1)
@@ -207,7 +211,7 @@ export default class {
         call('onFetchFormStart', state)
       }
   
-      mutations.fetchFormSuccess = (state, { errors, fields }) => {
+      mutations.fetchFormSuccess = (state, response) => {
         state.fetchFormError = null
         state.isFetchingForm = false
         call('onfetchFormSuccess', state, response)
@@ -264,7 +268,7 @@ export default class {
 
         if (result) {
           const index = state.list.findIndex(
-            item => item[idAttribute] === result[idAttribute]
+            item => item[idKey] === result[idKey]
           )
 
           if (~index) {
@@ -297,7 +301,7 @@ export default class {
         const { data } = response
 
         const index = state.list.findIndex(
-          item => item[idAttribute] === data[idAttribute]
+          item => item[idKey] === data[idKey]
         )
 
         if (~index) {
@@ -328,7 +332,7 @@ export default class {
         for (const index in state.list) {
           const item = state.list[index]
 
-          if (item[idAttribute] === data[idAttribute]) {
+          if (item[idKey] === data[idKey]) {
             state.list.splice(index, 1, { ...item, ...data })
             break
           }
@@ -354,7 +358,7 @@ export default class {
     if (hasCreate) {
       actions.create = ({ commit }, { payload, url } = {}) => {
         commit('createStart')
-        url = url || `/${resource}/`
+        url = url || options.createURL || `/${resource}/`
   
         return this.api.post(url, payload).then(response => {
           commit('createSuccess', response)
@@ -367,10 +371,11 @@ export default class {
     }
 
     if (hasDestroy) {
-      actions.destroy = ({ commit }, { id, params } = {}) => {
+      actions.destroy = ({ commit }, { id, params, url } = {}) => {
         commit('destroyStart')
+        url = run(url || options.destroyURL, { id }) || `/${resource}/${id}/`
 
-        return this.api.delete(`/${resource}/${id}/`, { params }).then(response => {
+        return this.api.delete(url, { params }).then(response => {
           commit('destroySuccess', id)
           return response
         }).catch(error => {
@@ -398,7 +403,7 @@ export default class {
     if (hasFetchForm) {
       actions.fetchForm = ({ commit }, { id, params, url } = {}) => {
         commit('fetchFormStart')
-        url = url || `/${resource}/${id ? `edit/${id}` : 'new'}/`
+        url = run(url || options.fetchFormURL, { id }) || `/${resource}/${id ? `edit/${id}` : 'new'}/`
 
         return this.api.get(url, { params }).then(response => {
           commit('fetchFormSuccess', response)
@@ -424,7 +429,7 @@ export default class {
         }
 
         commit('fetchListStart')
-        url = url || options.replaceURL || `/${resource}/`
+        url = url || options.fetchListURL || `/${resource}/`
 
         return this.api.get(url, { params }).then(response => {
           commit('fetchListSuccess', { response, increment })
@@ -440,9 +445,9 @@ export default class {
       actions.fetchSingle = ({ commit }, { form, id, params, url } = {}) => {
         commit('fetchSingleStart')
 
-        url = url || (form
+        url = run(url || options.fetchSingleURL, { form, id }) || (form
           ? `/${resource}/${id ? `${id}/edit` : 'new'}/`
-          : options.fetchSingleURL || `/${resource}/${id}/`)
+          : `/${resource}/${id}/`)
 
         return this.api.get(url, { params }).then(response => {
           commit('fetchSingleSuccess', response)
@@ -457,7 +462,7 @@ export default class {
     if (hasReplace) {
       actions.replace = ({ commit }, { id, payload, url } = {}) => {
         commit('replaceStart')
-        url = url || options.replaceURL || `/${resource}/${id}/`
+        url = run(url || options.replaceURL, { id }) || `/${resource}/${id}/`
 
         return this.api.put(url, payload).then(response => {
           commit('replaceSuccess', response)
@@ -470,10 +475,11 @@ export default class {
     }
 
     if (hasUpdate) {
-      actions.update = ({ commit }, { id, payload } = {}) => {
+      actions.update = ({ commit }, { id, payload, url } = {}) => {
         commit('updateStart')
+        url = run(url || options.updateURL, { id }) || `/${resource}/${id}/`
 
-        return this.api.patch(`/${resource}/${id}`, payload).then(response => {
+        return this.api.patch(url, payload).then(response => {
           commit('updateSuccess', response)
           return response
         }).catch(error => {
