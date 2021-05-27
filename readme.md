@@ -40,13 +40,21 @@ const storeModule = new VuexStoreModule({
 })
 
 storeModule.createModule(
-  resource, // name of store and usually used as endpoint of API
+  'resource', // name of store and usually used as endpoint of API
   options: {
-    idAttribute: 'id', // property used for find in object and arrays
+    idKey: 'id', // property used for find in object and arrays
     perPage: 12, // results per page
-    fetchFiltersURL: undefined, // custom URL for fechFiltersURL
-    replaceURL: undefined, // custom URL for replaceURL
-    fetchSingleURL: undefined, // custom URL for fetchSingleURL
+
+    createURL: '/', // custom URL for create
+    destroyURL: ({ id }) => `/${id}`, // custom URL for destroy
+    fetchFiltersURL: '/', // custom URL for fechFilters
+    fetchFormURL: ({ id }) => `/${id}`, // custom URL for fechForm
+    fetchListURL: '/', // custom URL for fechList
+    fetchSingleURL: ({ form, id }) => `/${id}`, // custom URL for fechSingle
+    replaceURL: ({ id }) => `/${id}`, // custom URL for replace
+    updateURL: ({ id }) => `/${id}`, // custom URL for update
+    fetchSingleURL: '/', // custom URL for fetchSingle
+
     methods: [ // methods that the VuexStoreModule will return
       'CREATE',
       'DESTROY',
