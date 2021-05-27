@@ -148,6 +148,14 @@
           }
         }
 
+        function run(fn) {
+          for (var _len2 = arguments.length, parameters = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            parameters[_key2 - 1] = arguments[_key2];
+          }
+
+          return typeof fn === 'function' ? fn.apply(void 0, parameters) : fn;
+        }
+
         var idKey = options.idKey || this.idKey || 'id';
         var perPage = options.perPage || 12;
         var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
@@ -315,9 +323,7 @@
             call('onFetchFormStart', state);
           };
 
-          mutations.fetchFormSuccess = function (state, _ref) {
-            _ref.errors;
-                _ref.fields;
+          mutations.fetchFormSuccess = function (state, response) {
             state.fetchFormError = null;
             state.isFetchingForm = false;
             call('onfetchFormSuccess', state, response);
@@ -464,12 +470,12 @@
         var actions = {};
 
         if (hasCreate) {
-          actions.create = function (_ref2) {
-            var commit = _ref2.commit;
+          actions.create = function (_ref) {
+            var commit = _ref.commit;
 
-            var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                payload = _ref3.payload,
-                url = _ref3.url;
+            var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                payload = _ref2.payload,
+                url = _ref2.url;
 
             commit('createStart');
             url = url || options.createURL || "/".concat(resource, "/");
@@ -484,23 +490,18 @@
         }
 
         if (hasDestroy) {
-          actions.destroy = function (_ref4) {
-            var commit = _ref4.commit;
+          actions.destroy = function (_ref3) {
+            var commit = _ref3.commit;
 
-            var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref5.id,
-                params = _ref5.params,
-                url = _ref5.url;
+            var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref4.id,
+                params = _ref4.params,
+                url = _ref4.url;
 
             commit('destroyStart');
-            url = url || options.destroyURL || "/".concat(resource, "/").concat(id, "/");
-
-            if (typeof url === 'function') {
-              url = url({
-                id: id
-              });
-            }
-
+            url = run(url || options.destroyURL, {
+              url: url
+            }) || "/".concat(resource, "/").concat(id, "/");
             return _this.api["delete"](url, {
               params: params
             }).then(function (response) {
@@ -514,12 +515,12 @@
         }
 
         if (hasFetchFilters) {
-          actions.fetchFilters = function (_ref6) {
-            var commit = _ref6.commit;
+          actions.fetchFilters = function (_ref5) {
+            var commit = _ref5.commit;
 
-            var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                params = _ref7.params,
-                url = _ref7.url;
+            var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                params = _ref6.params,
+                url = _ref6.url;
 
             commit('fetchFiltersStart');
             url = url || options.fetchFiltersURL || "/".concat(resource, "/filters/");
@@ -536,23 +537,18 @@
         }
 
         if (hasFetchForm) {
-          actions.fetchForm = function (_ref8) {
-            var commit = _ref8.commit;
+          actions.fetchForm = function (_ref7) {
+            var commit = _ref7.commit;
 
-            var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref9.id,
-                params = _ref9.params,
-                url = _ref9.url;
+            var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref8.id,
+                params = _ref8.params,
+                url = _ref8.url;
 
             commit('fetchFormStart');
-            url = url || options.fetchFormURL || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
-
-            if (typeof url === 'function') {
-              url = url({
-                id: id
-              });
-            }
-
+            url = run(url || options.fetchFormURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -566,20 +562,20 @@
         }
 
         if (hasFetchList) {
-          actions.fetchList = function (_ref10) {
-            var commit = _ref10.commit;
+          actions.fetchList = function (_ref9) {
+            var commit = _ref9.commit;
 
-            var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                _ref11$filters = _ref11.filters,
-                filters = _ref11$filters === void 0 ? {} : _ref11$filters,
-                increment = _ref11.increment,
-                _ref11$ordering = _ref11.ordering,
-                ordering = _ref11$ordering === void 0 ? [] : _ref11$ordering,
-                _ref11$page = _ref11.page,
-                page = _ref11$page === void 0 ? 1 : _ref11$page,
-                limit = _ref11.limit,
-                search = _ref11.search,
-                url = _ref11.url;
+            var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                _ref10$filters = _ref10.filters,
+                filters = _ref10$filters === void 0 ? {} : _ref10$filters,
+                increment = _ref10.increment,
+                _ref10$ordering = _ref10.ordering,
+                ordering = _ref10$ordering === void 0 ? [] : _ref10$ordering,
+                _ref10$page = _ref10.page,
+                page = _ref10$page === void 0 ? 1 : _ref10$page,
+                limit = _ref10.limit,
+                search = _ref10.search,
+                url = _ref10.url;
 
             var params = _objectSpread2(_objectSpread2({}, filters), {}, {
               limit: limit || perPage,
@@ -609,25 +605,20 @@
         }
 
         if (hasFetchSingle) {
-          actions.fetchSingle = function (_ref12) {
-            var commit = _ref12.commit;
+          actions.fetchSingle = function (_ref11) {
+            var commit = _ref11.commit;
 
-            var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                form = _ref13.form,
-                id = _ref13.id,
-                params = _ref13.params,
-                url = _ref13.url;
+            var _ref12 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                form = _ref12.form,
+                id = _ref12.id,
+                params = _ref12.params,
+                url = _ref12.url;
 
             commit('fetchSingleStart');
-            url = url || options.fetchSingleURL || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : "/".concat(resource, "/").concat(id, "/"));
-
-            if (typeof url === 'function') {
-              url = url({
-                form: form,
-                id: id
-              });
-            }
-
+            url = run(url || options.fetchSingleURL, {
+              form: form,
+              id: id
+            }) || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : "/".concat(resource, "/").concat(id, "/"));
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -641,23 +632,18 @@
         }
 
         if (hasReplace) {
-          actions.replace = function (_ref14) {
-            var commit = _ref14.commit;
+          actions.replace = function (_ref13) {
+            var commit = _ref13.commit;
 
-            var _ref15 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref15.id,
-                payload = _ref15.payload,
-                url = _ref15.url;
+            var _ref14 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref14.id,
+                payload = _ref14.payload,
+                url = _ref14.url;
 
             commit('replaceStart');
-            url = url || options.replaceURL || "/".concat(resource, "/").concat(id, "/");
-
-            if (typeof url === 'function') {
-              url = url({
-                id: id
-              });
-            }
-
+            url = run(url || options.replaceURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id, "/");
             return _this.api.put(url, payload).then(function (response) {
               commit('replaceSuccess', response);
               return response;
@@ -669,23 +655,18 @@
         }
 
         if (hasUpdate) {
-          actions.update = function (_ref16) {
-            var commit = _ref16.commit;
+          actions.update = function (_ref15) {
+            var commit = _ref15.commit;
 
-            var _ref17 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref17.id,
-                payload = _ref17.payload,
-                url = _ref17.url;
+            var _ref16 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref16.id,
+                payload = _ref16.payload,
+                url = _ref16.url;
 
             commit('updateStart');
-            url = url || options.updateURL || "/".concat(resource, "/").concat(id, "/");
-
-            if (typeof url === 'function') {
-              url = url({
-                id: id
-              });
-            }
-
+            url = run(url || options.updateURL, {
+              id: id
+            }) || "/".concat(resource, "/").concat(id, "/");
             return _this.api.patch(url, payload).then(function (response) {
               commit('updateSuccess', response);
               return response;

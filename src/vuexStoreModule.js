@@ -20,6 +20,10 @@ export default class {
       }
     }
 
+    function run (fn, ...parameters) {
+      return typeof fn === 'function' ? fn(...parameters) : fn
+    }
+
     const idKey = options.idKey || this.idKey || 'id'
     const perPage = options.perPage || 12
 
@@ -207,7 +211,7 @@ export default class {
         call('onFetchFormStart', state)
       }
   
-      mutations.fetchFormSuccess = (state, { errors, fields }) => {
+      mutations.fetchFormSuccess = (state, response) => {
         state.fetchFormError = null
         state.isFetchingForm = false
         call('onfetchFormSuccess', state, response)
@@ -369,12 +373,7 @@ export default class {
     if (hasDestroy) {
       actions.destroy = ({ commit }, { id, params, url } = {}) => {
         commit('destroyStart')
-
-        url = url || options.destroyURL || `/${resource}/${id}/`
-
-        if (typeof url === 'function') {
-          url = url({ id })
-        }
+        url = run(url || options.destroyURL, { url }) || `/${resource}/${id}/`
 
         return this.api.delete(url, { params }).then(response => {
           commit('destroySuccess', id)
@@ -404,12 +403,7 @@ export default class {
     if (hasFetchForm) {
       actions.fetchForm = ({ commit }, { id, params, url } = {}) => {
         commit('fetchFormStart')
-
-        url = url || options.fetchFormURL || `/${resource}/${id ? `edit/${id}` : 'new'}/`
-
-        if (typeof url === 'function') {
-          url = url({ id })
-        }
+        url = run(url || options.fetchFormURL, { id }) || `/${resource}/${id ? `edit/${id}` : 'new'}/`
 
         return this.api.get(url, { params }).then(response => {
           commit('fetchFormSuccess', response)
@@ -451,13 +445,9 @@ export default class {
       actions.fetchSingle = ({ commit }, { form, id, params, url } = {}) => {
         commit('fetchSingleStart')
 
-        url = url || options.fetchSingleURL || (form
+        url = run(url || options.fetchSingleURL, { form, id }) || (form
           ? `/${resource}/${id ? `${id}/edit` : 'new'}/`
           : `/${resource}/${id}/`)
-        
-        if (typeof url === 'function') {
-          url = url({ form, id })
-        }
 
         return this.api.get(url, { params }).then(response => {
           commit('fetchSingleSuccess', response)
@@ -472,12 +462,7 @@ export default class {
     if (hasReplace) {
       actions.replace = ({ commit }, { id, payload, url } = {}) => {
         commit('replaceStart')
-
-        url = url || options.replaceURL || `/${resource}/${id}/`
-
-        if (typeof url === 'function') {
-          url = url({ id })
-        }
+        url = run(url || options.replaceURL, { id }) || `/${resource}/${id}/`
 
         return this.api.put(url, payload).then(response => {
           commit('replaceSuccess', response)
@@ -492,12 +477,7 @@ export default class {
     if (hasUpdate) {
       actions.update = ({ commit }, { id, payload, url } = {}) => {
         commit('updateStart')
-
-        url = url || options.updateURL || `/${resource}/${id}/`
-
-        if (typeof url === 'function') {
-          url = url({ id })
-        }
+        url = run(url || options.updateURL, { id }) || `/${resource}/${id}/`
 
         return this.api.patch(url, payload).then(response => {
           commit('updateSuccess', response)
