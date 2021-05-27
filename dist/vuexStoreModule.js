@@ -1,8 +1,46 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.VuexStoreModule = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.VuexStoreModule = factory());
 }(this, (function () { 'use strict';
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+
+      if (enumerableOnly) {
+        symbols = symbols.filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        });
+      }
+
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -41,40 +79,6 @@
     return obj;
   }
 
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
   function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
@@ -84,7 +88,7 @@
   }
 
   function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
   }
 
   function _unsupportedIterableToArray(o, minLen) {
@@ -120,7 +124,7 @@
 
 
       this.api = options.apiService;
-      this.idAttribute = options.idAttribute;
+      this.idKey = options.idKey;
     }
 
     _createClass(_default, [{
@@ -144,7 +148,7 @@
           }
         }
 
-        var idAttribute = options.idAttribute || this.idAttribute || 'id';
+        var idKey = options.idKey || this.idKey || 'id';
         var perPage = options.perPage || 12;
         var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
         var hasCreate = methods.includes('CREATE');
@@ -217,7 +221,7 @@
           byId: function byId(state) {
             return function (id) {
               return state.list.find(function (item) {
-                return item[idAttribute] === id;
+                return item[idKey] === id;
               });
             };
           },
@@ -265,7 +269,7 @@
 
           mutations.destroySuccess = function (state, id) {
             var index = state.list.findIndex(function (item) {
-              return item[idAttribute] === id;
+              return item[idKey] === id;
             });
 
             if (~index) {
@@ -312,8 +316,8 @@
           };
 
           mutations.fetchFormSuccess = function (state, _ref) {
-            var errors = _ref.errors,
-                fields = _ref.fields;
+            _ref.errors;
+                _ref.fields;
             state.fetchFormError = null;
             state.isFetchingForm = false;
             call('onfetchFormSuccess', state, response);
@@ -374,7 +378,7 @@
 
             if (result) {
               var index = state.list.findIndex(function (item) {
-                return item[idAttribute] === result[idAttribute];
+                return item[idKey] === result[idKey];
               });
 
               if (~index) {
@@ -406,7 +410,7 @@
           mutations.replaceSuccess = function (state, response) {
             var data = response.data;
             var index = state.list.findIndex(function (item) {
-              return item[idAttribute] === data[idAttribute];
+              return item[idKey] === data[idKey];
             });
 
             if (~index) {
@@ -437,7 +441,7 @@
             for (var index in state.list) {
               var item = state.list[index];
 
-              if (item[idAttribute] === data[idAttribute]) {
+              if (item[idKey] === data[idKey]) {
                 state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
                 break;
               }
@@ -468,7 +472,7 @@
                 url = _ref3.url;
 
             commit('createStart');
-            url = url || "/".concat(resource, "/");
+            url = url || options.createURL || "/".concat(resource, "/");
             return _this.api.post(url, payload).then(function (response) {
               commit('createSuccess', response);
               return response;
@@ -485,10 +489,19 @@
 
             var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
                 id = _ref5.id,
-                params = _ref5.params;
+                params = _ref5.params,
+                url = _ref5.url;
 
             commit('destroyStart');
-            return _this.api["delete"]("/".concat(resource, "/").concat(id, "/"), {
+            url = url || options.destroyURL || "/".concat(resource, "/").concat(id, "/");
+
+            if (typeof url === 'function') {
+              url = url({
+                id: id
+              });
+            }
+
+            return _this.api["delete"](url, {
               params: params
             }).then(function (response) {
               commit('destroySuccess', id);
@@ -532,7 +545,14 @@
                 url = _ref9.url;
 
             commit('fetchFormStart');
-            url = url || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
+            url = url || options.fetchFormURL || "/".concat(resource, "/").concat(id ? "edit/".concat(id) : 'new', "/");
+
+            if (typeof url === 'function') {
+              url = url({
+                id: id
+              });
+            }
+
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -569,7 +589,7 @@
             });
 
             commit('fetchListStart');
-            url = url || options.replaceURL || "/".concat(resource, "/");
+            url = url || options.fetchListURL || "/".concat(resource, "/");
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -599,7 +619,15 @@
                 url = _ref13.url;
 
             commit('fetchSingleStart');
-            url = url || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : options.fetchSingleURL || "/".concat(resource, "/").concat(id, "/"));
+            url = url || options.fetchSingleURL || (form ? "/".concat(resource, "/").concat(id ? "".concat(id, "/edit") : 'new', "/") : "/".concat(resource, "/").concat(id, "/"));
+
+            if (typeof url === 'function') {
+              url = url({
+                form: form,
+                id: id
+              });
+            }
+
             return _this.api.get(url, {
               params: params
             }).then(function (response) {
@@ -623,6 +651,13 @@
 
             commit('replaceStart');
             url = url || options.replaceURL || "/".concat(resource, "/").concat(id, "/");
+
+            if (typeof url === 'function') {
+              url = url({
+                id: id
+              });
+            }
+
             return _this.api.put(url, payload).then(function (response) {
               commit('replaceSuccess', response);
               return response;
@@ -639,10 +674,19 @@
 
             var _ref17 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
                 id = _ref17.id,
-                payload = _ref17.payload;
+                payload = _ref17.payload,
+                url = _ref17.url;
 
             commit('updateStart');
-            return _this.api.patch("/".concat(resource, "/").concat(id), payload).then(function (response) {
+            url = url || options.updateURL || "/".concat(resource, "/").concat(id, "/");
+
+            if (typeof url === 'function') {
+              url = url({
+                id: id
+              });
+            }
+
+            return _this.api.patch(url, payload).then(function (response) {
               commit('updateSuccess', response);
               return response;
             })["catch"](function (error) {

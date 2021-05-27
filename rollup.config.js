@@ -11,13 +11,20 @@ export default {
   input: 'src/vuexStoreModule.js',
 
   output: [
-    { file: 'dist/vuexStoreModule.js', ...options },
-    { file: 'dist/vuexStoreModule.min.js', sourcemap: true, ...options }
+    {
+      file: 'dist/vuexStoreModule.js',
+      ...options
+    },
+    {
+      file: 'dist/vuexStoreModule.min.js',
+      plugins: [terser()],
+      sourcemap: true,
+      ...options
+    }
   ],
 
   plugins: [
     remove({ targets: 'dist/*' }),
-    babel({ exclude: 'node_modules/**' }),
-    terser({ include: [/^.+\.min\.js$/] })
+    babel({ exclude: 'node_modules/**' })
   ]
 }
