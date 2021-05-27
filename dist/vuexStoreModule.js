@@ -500,7 +500,7 @@
 
             commit('destroyStart');
             url = run(url || options.destroyURL, {
-              url: url
+              id: id
             }) || "/".concat(resource, "/").concat(id, "/");
             return _this.api["delete"](url, {
               params: params

@@ -373,7 +373,7 @@ export default class {
     if (hasDestroy) {
       actions.destroy = ({ commit }, { id, params, url } = {}) => {
         commit('destroyStart')
-        url = run(url || options.destroyURL, { url }) || `/${resource}/${id}/`
+        url = run(url || options.destroyURL, { id }) || `/${resource}/${id}/`
 
         return this.api.delete(url, { params }).then(response => {
           commit('destroySuccess', id)
