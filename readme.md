@@ -53,7 +53,6 @@ storeModule.createModule(
     fetchSingleURL: ({ form, id }) => `/${id}`, // custom URL for fechSingle
     replaceURL: ({ id }) => `/${id}`, // custom URL for replace
     updateURL: ({ id }) => `/${id}`, // custom URL for update
-    fetchSingleURL: '/', // custom URL for fetchSingle
 
     methods: [ // methods that the VuexStoreModule will return
       'CREATE',
