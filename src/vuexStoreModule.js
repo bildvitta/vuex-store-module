@@ -298,14 +298,14 @@ export default class {
       }
 
       mutations.replaceSuccess = (state, response) => {
-        const { data } = response
+        const { result } = response.data
 
         const index = state.list.findIndex(
-          item => item[idKey] === data[idKey]
+          item => item[idKey] === result[idKey]
         )
 
         if (~index) {
-          state.list.splice(index, 1, data)
+          state.list.splice(index, 1, result)
         }
 
         state.replaceError = null
@@ -327,13 +327,13 @@ export default class {
       }
 
       mutations.updateSuccess = (state, response) => {
-        const { data } = response
+        const { result } = response.data
 
         for (const index in state.list) {
           const item = state.list[index]
 
-          if (item[idKey] === data[idKey]) {
-            state.list.splice(index, 1, { ...item, ...data })
+          if (item[idKey] === result[idKey]) {
+            state.list.splice(index, 1, { ...item, ...result })
             break
           }
         }
