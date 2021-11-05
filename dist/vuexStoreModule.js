@@ -414,13 +414,13 @@
           };
 
           mutations.replaceSuccess = function (state, response) {
-            var data = response.data;
+            var result = response.data.result;
             var index = state.list.findIndex(function (item) {
-              return item[idKey] === data[idKey];
+              return item[idKey] === result[idKey];
             });
 
             if (~index) {
-              state.list.splice(index, 1, data);
+              state.list.splice(index, 1, result);
             }
 
             state.replaceError = null;
@@ -442,13 +442,13 @@
           };
 
           mutations.updateSuccess = function (state, response) {
-            var data = response.data;
+            var result = response.data.result;
 
             for (var index in state.list) {
               var item = state.list[index];
 
-              if (item[idKey] === data[idKey]) {
-                state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), data));
+              if (item[idKey] === result[idKey]) {
+                state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, item), result));
                 break;
               }
             }
