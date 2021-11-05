@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Unreleasded 
 
 ## Fixed
--  adjusting response data on store module
+-  adjusting response data on update and replace action
 
 ## 0.0.21 - 11-05-2020
 
