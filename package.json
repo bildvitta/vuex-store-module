@@ -6,7 +6,7 @@
     "vue",
     "vuex"
   ],
-  "main": "src/vuexStoreModule.js",
+  "main": "dist/vuexStoreModule.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config"
