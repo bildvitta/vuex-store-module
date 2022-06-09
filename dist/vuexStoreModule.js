@@ -338,11 +338,12 @@
 
             var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
             var response = payload.response,
-                increment = payload.increment;
+                increment = payload.increment,
+                page = payload.page;
             var _response$data = response.data,
                 results = _response$data.results,
                 count = _response$data.count;
-            increment ? (_state$list = state.list).push.apply(_state$list, _toConsumableArray(results)) : state.list = results || [];
+            increment && page > 1 ? (_state$list = state.list).push.apply(_state$list, _toConsumableArray(results)) : state.list = results || [];
             state.totalPages = Math.ceil(count / perPage);
             state.fetchListError = null;
             state.isFetchingList = false;
@@ -582,7 +583,8 @@
             }).then(function (response) {
               commit('fetchListSuccess', {
                 response: response,
-                increment: increment
+                increment: increment,
+                page: page
               });
               return response;
             })["catch"](function (error) {
