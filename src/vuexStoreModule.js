@@ -231,10 +231,10 @@ export default class {
       }
 
       mutations.fetchListSuccess = (state, payload = {}) => {
-        const { response, increment } = payload
+        const { response, increment, page } = payload
         const { results, count } = response.data
 
-        increment
+        increment && page > 1
           ? state.list.push(...results)
           : state.list = results || []
   
@@ -432,7 +432,7 @@ export default class {
         url = url || options.fetchListURL || `/${resource}/`
 
         return this.api.get(url, { params }).then(response => {
-          commit('fetchListSuccess', { response, increment })
+          commit('fetchListSuccess', { response, increment, page })
           return response
         }).catch(error => {
           commit('fetchListError', { error, increment })
