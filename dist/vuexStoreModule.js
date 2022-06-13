@@ -149,9 +149,10 @@
 
         var idKey = options.idKey || this.idKey || 'id';
         var perPage = options.perPage || 12;
-        var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
+        var methods = options.methods || ['CREATE', 'DESTROY', 'FETCH_FIELD_OPTIONS', 'FETCH_FILTERS', 'FETCH_FORM', 'FETCH_LIST', 'FETCH_SINGLE', 'REPLACE', 'UPDATE'];
         var hasCreate = methods.includes('CREATE');
         var hasDestroy = methods.includes('DESTROY');
+        var hasFetchFieldOptions = methods.includes('FETCH_FIELD_OPTIONS');
         var hasFetchFilters = methods.includes('FETCH_FILTERS');
         var hasFetchForm = methods.includes('FETCH_FORM');
         var hasFetchList = methods.includes('FETCH_LIST');
@@ -173,6 +174,11 @@
         if (hasDestroy) {
           stateData.isDestroying = false;
           stateData.destroyError = null;
+        }
+
+        if (hasFetchFieldOptions) {
+          stateData.isFetchingFieldOptions = false;
+          stateData.fetchFieldOptionsError = null;
         }
 
         if (hasFetchFilters) {
@@ -225,10 +231,10 @@
             };
           },
           isLoading: function isLoading(state) {
-            return state.isCreating || state.isDestroying || state.isFetchingFilters || state.isFetchingList || state.isFetchingSingle || state.isReplacing || state.isUpdating;
+            return state.isCreating || state.isDestroying || state.isFetchingFieldOptions || state.isFetchingFilters || state.isFetchingList || state.isFetchingSingle || state.isReplacing || state.isUpdating;
           },
           hasErrors: function hasErrors(state) {
-            return state.createError !== null || state.destroyError !== null || state.fetchFormError !== null || state.fetchFiltersError !== null || state.fetchListError !== null || state.fetchSingleError !== null || state.replaceError !== null || state.updateError !== null;
+            return state.createError !== null || state.destroyError !== null || state.fetchFormError !== null || state.fetchFieldOptionsError !== null || state.fetchFiltersError !== null || state.fetchListError !== null || state.fetchSingleError !== null || state.replaceError !== null || state.updateError !== null;
           }
         };
         Object.assign(getters, options.getters || {}); // Mutations
@@ -287,6 +293,25 @@
           };
         }
 
+        if (hasFetchFieldOptions) {
+          mutations.fetchFieldOptionsStart = function (state) {
+            state.isFetchingFieldOptions = true;
+            call('onFetchFieldOptionsStart', state);
+          };
+
+          mutations.fetchFieldOptionsSuccess = function (state, response) {
+            state.fetchFieldOptionsError = null;
+            state.isFetchingFieldOptions = false;
+            call('onFetchFieldOptionsSuccess', state, response);
+          };
+
+          mutations.fetchFieldOptionsError = function (state, error) {
+            state.fetchFieldOptionsError = error;
+            state.isFetchingFieldOptions = false;
+            call('onFetchFieldOptionsError', state, error);
+          };
+        }
+
         if (hasFetchFilters) {
           mutations.fetchFiltersStart = function (state) {
             state.isFetchingFilters = true;
@@ -298,7 +323,7 @@
             state.filters = fields;
             state.fetchFiltersError = null;
             state.isFetchingFilters = false;
-            call('onfetchFiltersSuccess', state, response);
+            call('onFetchFiltersSuccess', state, response);
           };
 
           mutations.fetchFiltersError = function (state, error) {
@@ -506,13 +531,36 @@
           };
         }
 
-        if (hasFetchFilters) {
-          actions.fetchFilters = function (_ref5) {
+        if (hasFetchFieldOptions) {
+          actions.fetchFieldOptions = function (_ref5) {
             var commit = _ref5.commit;
 
             var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                field = _ref6.field,
                 params = _ref6.params,
                 url = _ref6.url;
+
+            commit('fetchFieldOptionsStart');
+            url = url || "/".concat(resource, "/options/").concat(field);
+            return _this.api.get(url, {
+              params: params
+            }).then(function (response) {
+              commit('fetchFieldOptionsSuccess', response);
+              return response;
+            })["catch"](function (error) {
+              commit('fetchFieldOptionsError', error);
+              return Promise.reject(error);
+            });
+          };
+        }
+
+        if (hasFetchFilters) {
+          actions.fetchFilters = function (_ref7) {
+            var commit = _ref7.commit;
+
+            var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                params = _ref8.params,
+                url = _ref8.url;
 
             commit('fetchFiltersStart');
             url = url || options.fetchFiltersURL || "/".concat(resource, "/filters/");
@@ -529,13 +577,13 @@
         }
 
         if (hasFetchForm) {
-          actions.fetchForm = function (_ref7) {
-            var commit = _ref7.commit;
+          actions.fetchForm = function (_ref9) {
+            var commit = _ref9.commit;
 
-            var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref8.id,
-                params = _ref8.params,
-                url = _ref8.url;
+            var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref10.id,
+                params = _ref10.params,
+                url = _ref10.url;
 
             commit('fetchFormStart');
             url = run(url || options.fetchFormURL, {
@@ -554,20 +602,20 @@
         }
 
         if (hasFetchList) {
-          actions.fetchList = function (_ref9) {
-            var commit = _ref9.commit;
+          actions.fetchList = function (_ref11) {
+            var commit = _ref11.commit;
 
-            var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                _ref10$filters = _ref10.filters,
-                filters = _ref10$filters === void 0 ? {} : _ref10$filters,
-                increment = _ref10.increment,
-                _ref10$ordering = _ref10.ordering,
-                ordering = _ref10$ordering === void 0 ? [] : _ref10$ordering,
-                _ref10$page = _ref10.page,
-                page = _ref10$page === void 0 ? 1 : _ref10$page,
-                limit = _ref10.limit,
-                search = _ref10.search,
-                url = _ref10.url;
+            var _ref12 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                _ref12$filters = _ref12.filters,
+                filters = _ref12$filters === void 0 ? {} : _ref12$filters,
+                increment = _ref12.increment,
+                _ref12$ordering = _ref12.ordering,
+                ordering = _ref12$ordering === void 0 ? [] : _ref12$ordering,
+                _ref12$page = _ref12.page,
+                page = _ref12$page === void 0 ? 1 : _ref12$page,
+                limit = _ref12.limit,
+                search = _ref12.search,
+                url = _ref12.url;
 
             var params = _objectSpread2(_objectSpread2({}, filters), {}, {
               limit: limit || perPage,
@@ -598,14 +646,14 @@
         }
 
         if (hasFetchSingle) {
-          actions.fetchSingle = function (_ref11) {
-            var commit = _ref11.commit;
+          actions.fetchSingle = function (_ref13) {
+            var commit = _ref13.commit;
 
-            var _ref12 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                form = _ref12.form,
-                id = _ref12.id,
-                params = _ref12.params,
-                url = _ref12.url;
+            var _ref14 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                form = _ref14.form,
+                id = _ref14.id,
+                params = _ref14.params,
+                url = _ref14.url;
 
             commit('fetchSingleStart');
             url = run(url || options.fetchSingleURL, {
@@ -625,13 +673,13 @@
         }
 
         if (hasReplace) {
-          actions.replace = function (_ref13) {
-            var commit = _ref13.commit;
+          actions.replace = function (_ref15) {
+            var commit = _ref15.commit;
 
-            var _ref14 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref14.id,
-                payload = _ref14.payload,
-                url = _ref14.url;
+            var _ref16 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref16.id,
+                payload = _ref16.payload,
+                url = _ref16.url;
 
             commit('replaceStart');
             url = run(url || options.replaceURL, {
@@ -648,13 +696,13 @@
         }
 
         if (hasUpdate) {
-          actions.update = function (_ref15) {
-            var commit = _ref15.commit;
+          actions.update = function (_ref17) {
+            var commit = _ref17.commit;
 
-            var _ref16 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                id = _ref16.id,
-                payload = _ref16.payload,
-                url = _ref16.url;
+            var _ref18 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                id = _ref18.id,
+                payload = _ref18.payload,
+                url = _ref18.url;
 
             commit('updateStart');
             url = run(url || options.updateURL, {
