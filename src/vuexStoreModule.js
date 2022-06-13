@@ -66,6 +66,11 @@ export default class {
       stateData.destroyError = null
     }
 
+    if (hasFetchFieldOptions) {
+      stateData.isFetchingFieldOptions = false
+      stateData.fetchFieldOptionsError = null
+    }
+
     if (hasFetchFilters) {
       stateData.isFetchingFilters = false
       stateData.fetchFiltersError = null
@@ -111,6 +116,7 @@ export default class {
       isLoading: state => (
         state.isCreating ||
         state.isDestroying ||
+        state.isFetchingFieldOptions ||
         state.isFetchingFilters ||
         state.isFetchingList ||
         state.isFetchingSingle ||
@@ -122,6 +128,7 @@ export default class {
         state.createError !== null ||
         state.destroyError !== null ||
         state.fetchFormError !== null ||
+        state.fetchFieldOptionsError !== null ||
         state.fetchFiltersError !== null ||
         state.fetchListError !== null ||
         state.fetchSingleError !== null ||
@@ -185,6 +192,25 @@ export default class {
       }
     }
 
+    if (hasFetchFieldOptions) {
+      mutations.fetchFieldOptionsStart = state => {
+        state.isFetchingFieldOptions = true
+        call('onFetchFieldOptionsStart', state)
+      }
+
+      mutations.fetchFieldOptionsSuccess = (state, response) => {
+        state.fetchFieldOptionsError = null
+        state.isFetchingFieldOptions = false
+        call('onFetchFieldOptionsSuccess', state, response)
+      }
+
+      mutations.fetchFieldOptionsError = (state, error) => {
+        state.fetchFieldOptionsError = error
+        state.isFetchingFieldOptions = false
+        call('onFetchFieldOptionsError', state, error)
+      }
+    }
+
     if (hasFetchFilters) {
       mutations.fetchFiltersStart = state => {
         state.isFetchingFilters = true
@@ -197,7 +223,7 @@ export default class {
 
         state.fetchFiltersError = null
         state.isFetchingFilters = false
-        call('onfetchFiltersSuccess', state, response)
+        call('onFetchFiltersSuccess', state, response)
       }
 
       mutations.fetchFiltersError = (state, error) => {
@@ -388,12 +414,15 @@ export default class {
     }
 
     if (hasFetchFieldOptions) {
-      actions.fetchFieldOptions = (_, { field, params, url } = {}) => {
+      actions.fetchFieldOptions = ({ commit }, { field, params, url } = {}) => {
+        commit('fetchFieldOptionsStart')
         url = url || `/${resource}/options/${field}`
 
         return this.api.get(url, { params }).then(response => {
+          commit('fetchFieldOptionsSuccess', response)
           return response
         }).catch(error => {
+          commit('fetchFieldOptionsError', error)
           return Promise.reject(error)
         })
       }
