@@ -30,6 +30,7 @@ export default class {
     const methods = options.methods || [
       'CREATE',
       'DESTROY',
+      'FETCH_FIELD_OPTIONS',
       'FETCH_FILTERS',
       'FETCH_FORM',
       'FETCH_LIST',
@@ -40,6 +41,7 @@ export default class {
 
     const hasCreate = methods.includes('CREATE')
     const hasDestroy = methods.includes('DESTROY')
+    const hasFetchFieldOptions = methods.includes('FETCH_FIELD_OPTIONS')
     const hasFetchFilters = methods.includes('FETCH_FILTERS')
     const hasFetchForm = methods.includes('FETCH_FORM')
     const hasFetchList = methods.includes('FETCH_LIST')
@@ -62,6 +64,11 @@ export default class {
     if (hasDestroy) {
       stateData.isDestroying = false
       stateData.destroyError = null
+    }
+
+    if (hasFetchFieldOptions) {
+      stateData.isFetchingFieldOptions = false
+      stateData.fetchFieldOptionsError = null
     }
 
     if (hasFetchFilters) {
@@ -103,12 +110,13 @@ export default class {
       filters: state => state.filters,
 
       totalPages: state => state.totalPages,
-  
+
       byId: state => id => state.list.find(item => item[idKey] === id),
 
       isLoading: state => (
         state.isCreating ||
         state.isDestroying ||
+        state.isFetchingFieldOptions ||
         state.isFetchingFilters ||
         state.isFetchingList ||
         state.isFetchingSingle ||
@@ -120,6 +128,7 @@ export default class {
         state.createError !== null ||
         state.destroyError !== null ||
         state.fetchFormError !== null ||
+        state.fetchFieldOptionsError !== null ||
         state.fetchFiltersError !== null ||
         state.fetchListError !== null ||
         state.fetchSingleError !== null ||
@@ -163,7 +172,7 @@ export default class {
         state.isDestroying = true
         call('onDestroyStart', state)
       }
-  
+
       mutations.destroySuccess = (state, id) => {
         const index = state.list.findIndex(item => item[idKey] === id)
 
@@ -183,6 +192,25 @@ export default class {
       }
     }
 
+    if (hasFetchFieldOptions) {
+      mutations.fetchFieldOptionsStart = state => {
+        state.isFetchingFieldOptions = true
+        call('onFetchFieldOptionsStart', state)
+      }
+
+      mutations.fetchFieldOptionsSuccess = (state, response) => {
+        state.fetchFieldOptionsError = null
+        state.isFetchingFieldOptions = false
+        call('onFetchFieldOptionsSuccess', state, response)
+      }
+
+      mutations.fetchFieldOptionsError = (state, error) => {
+        state.fetchFieldOptionsError = error
+        state.isFetchingFieldOptions = false
+        call('onFetchFieldOptionsError', state, error)
+      }
+    }
+
     if (hasFetchFilters) {
       mutations.fetchFiltersStart = state => {
         state.isFetchingFilters = true
@@ -195,7 +223,7 @@ export default class {
 
         state.fetchFiltersError = null
         state.isFetchingFilters = false
-        call('onfetchFiltersSuccess', state, response)
+        call('onFetchFiltersSuccess', state, response)
       }
 
       mutations.fetchFiltersError = (state, error) => {
@@ -210,7 +238,7 @@ export default class {
         state.isFetchingForm = true
         call('onFetchFormStart', state)
       }
-  
+
       mutations.fetchFormSuccess = (state, response) => {
         state.fetchFormError = null
         state.isFetchingForm = false
@@ -237,7 +265,7 @@ export default class {
         increment && page > 1
           ? state.list.push(...results)
           : state.list = results || []
-  
+
         state.totalPages = Math.ceil(count / perPage)
         state.fetchListError = null
         state.isFetchingList = false
@@ -342,14 +370,14 @@ export default class {
         state.isUpdating = false
         call('onUpdateSuccess', state, response)
       }
-  
+
       mutations.updateError = (state, error) => {
         state.updateError = error
         state.isUpdating = false
         call('onUpdateError', state, error)
       }
     }
-  
+
     Object.assign(mutations, options.mutations || {})
 
     // Actions
@@ -359,7 +387,7 @@ export default class {
       actions.create = ({ commit }, { payload, url } = {}) => {
         commit('createStart')
         url = url || options.createURL || `/${resource}/`
-  
+
         return this.api.post(url, payload).then(response => {
           commit('createSuccess', response)
           return response
@@ -385,11 +413,26 @@ export default class {
       }
     }
 
+    if (hasFetchFieldOptions) {
+      actions.fetchFieldOptions = ({ commit }, { field, params, url } = {}) => {
+        commit('fetchFieldOptionsStart')
+        url = url || `/${resource}/options/${field}`
+
+        return this.api.get(url, { params }).then(response => {
+          commit('fetchFieldOptionsSuccess', response)
+          return response
+        }).catch(error => {
+          commit('fetchFieldOptionsError', error)
+          return Promise.reject(error)
+        })
+      }
+    }
+
     if (hasFetchFilters) {
       actions.fetchFilters = ({ commit }, { params, url } = {}) => {
         commit('fetchFiltersStart')
         url = url || options.fetchFiltersURL || `/${resource}/filters/`
-  
+
         return this.api.get(url, { params }).then(response => {
           commit('fetchFiltersSuccess', response)
           return response

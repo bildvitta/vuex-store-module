@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Não publicado
+## BREAKING CHANGES
+- Corrigido typo no nome do evento `onfetchFiltersSuccess` para `onFetchFiltersSuccess`.
+
+### Adicionado
+- Adicionado nova ação para buscar as opções de um field. Será comumente utilizado em select's com lazy loading.
+
 ## [1.0.4] - 09-06-2022
 ### Corrigido
 - Corrigido funcionalidade de increment no fetchListSuccess, será validado o número da página, caso a página for igual a 1, então os dados da lista serão resetados, senão será incrementado, isto resolve o problema de quando mudamos de página e voltamos para a mesma e os dados são duplicados.
